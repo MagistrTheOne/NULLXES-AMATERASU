@@ -1,0 +1,11 @@
+TOPOLOGY = slice(0, 16)
+EFFECTORS = slice(16, 32)
+WORKSPACE = slice(32, 48)
+LOCOMOTION = slice(48, 56)
+MANIPULATION = slice(56, 64)
+SENSORS = slice(64, 80)
+PAYLOAD = slice(80, 88)
+DEXTERITY = slice(88, 96)
+MOBILITY = slice(96, 112)
+RESERVED = slice(112, 128)
+D_ECD = 128

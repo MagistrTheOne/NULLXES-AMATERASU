@@ -1,0 +1,6 @@
+{
+  "stage": 4,
+  "name": "cross_embodiment",
+  "losses": {"mm": 1.0, "action": 1.0, "lang": 0.5, "future": 0.0, "agency_on": false},
+  "transition": "leave-one-morphology ADE"
+}

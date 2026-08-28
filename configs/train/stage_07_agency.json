@@ -1,0 +1,6 @@
+{
+  "stage": 7,
+  "name": "agency",
+  "losses": {"mm": 1.0, "action": 1.0, "future": 1.0, "lang": 0.5, "intent": 0.2, "nonint": 0.3, "gate": 0.3, "agency_on": true},
+  "transition": "non-intervention precision/recall; ECE"
+}

@@ -1,0 +1,11 @@
+{
+  "profile": "H100-80GB",
+  "gpu_memory_gb": 80,
+  "precision": "bf16",
+  "router_dtype": "fp32",
+  "tp": 8,
+  "pp": 8,
+  "ep": 8,
+  "activation_checkpoint": "slow",
+  "notes": "Supported topology profile. Hardware-profile driven, not baked into model math."
+}

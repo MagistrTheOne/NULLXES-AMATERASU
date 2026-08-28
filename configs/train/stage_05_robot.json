@@ -1,0 +1,6 @@
+{
+  "stage": 5,
+  "name": "robot",
+  "losses": {"mm": 1.0, "action": 1.0, "lang": 0.5, "future": 0.0, "agency_on": false},
+  "transition": "DROID/OXE action ADE"
+}

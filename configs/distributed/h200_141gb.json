@@ -1,0 +1,11 @@
+{
+  "profile": "H200-141GB",
+  "gpu_memory_gb": 141,
+  "precision": "bf16",
+  "router_dtype": "fp32",
+  "tp": 4,
+  "pp": 8,
+  "ep": 8,
+  "activation_checkpoint": "slow",
+  "notes": "Primary Phase VI topology. Do not encode these values into mathematical modules."
+}

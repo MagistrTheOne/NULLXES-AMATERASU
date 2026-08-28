@@ -1,0 +1,12 @@
+{
+  "name": "commercial",
+  "weights": {
+    "hifi-umi-2k": 0.32,
+    "droid": 0.28,
+    "oxe_cc_by": 0.18,
+    "agency": 0.12,
+    "simulation": 0.10
+  },
+  "drop": ["agibot", "egodex", "ego4d", "epic", "bones-seed"],
+  "commercial": true
+}

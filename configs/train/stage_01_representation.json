@@ -1,0 +1,6 @@
+{
+  "stage": 1,
+  "name": "representation",
+  "losses": {"mm": 1.0, "lang": 0.5, "action": 0.0, "future": 0.0, "agency_on": false},
+  "transition": "hold-out latent RMSE decreasing; no encoder collapse"
+}

@@ -1,0 +1,50 @@
+"""Frozen AMATERASU-32B v0.1 identity. Changing these forfeits the model name."""
+
+FROZEN_TOTAL = 31_740_290_560
+FROZEN_SLOW_ACTIVE = 24_885_565_952
+FROZEN_SLOW_ACT_HOLD = 25_432_057_344
+FROZEN_FAST_STATE_ACTIVE = 4_546_563_584
+FROZEN_FAST_SENSOR_REFRESH_VISION = 1_605_837_824
+FROZEN_FAST_SENSOR_REFRESH_BOTH = 1_665_717_248
+FROZEN_FAST_ALWAYS = 6_212_280_832
+FROZEN_FAST_ACT_HOLD = 6_758_772_224
+FROZEN_FAST_STATE_FLOW = 5_093_054_976
+FROZEN_LM_HEAD = 268_435_456
+FROZEN_FLOW = 546_491_392
+
+MODEL_ID = "AMATERASU-32B-v0.1"
+AUTHOR = "MagistrTheOne | NULLXES"
+
+LEDGER = {
+    "vision_encoder": 1_605_837_824,
+    "embeddings": 537_001_984,
+    "shared_hpt_attn_norm": 1_677_895_680,
+    "vision_ffns": 5_410_816_000,
+    "language_ffns": 3_787_571_200,
+    "physical_dense_ffns": 2_705_408_000,
+    "physical_experts": 9_060_433_920,
+    "agency_ffns": 3_787_571_200,
+    "nces_encoder": 274_490_880,
+    "audio_encoder": 59_879_424,
+    "tactile": 17_825_792,
+    "ssm": 428_032_000,
+    "memory": 194_523_648,
+    "latent_dynamics": 830_523_392,
+    "eac_gcis": 799_404_544,
+    "flow": 546_491_392,
+    "ecd": 16_583_680,
+}
+
+N_CAM_MAX = 6
+T_CLIP = 16
+TRAIN_H = 224
+TRAIN_W = 224
+S_MAX = 8192
+N_NODES_MAX = 64
+H_CHUNK_MAX = 32
+EPISODIC_RING_SIZE = 1024
+SEMANTIC_RING_SIZE = 4096
+TBPTT_FAST_TICKS = 16
+VOCAB_SIZE = 65_536
+PRIMARY_CLUSTER = "H200-141GB"
+D_NCES_ACTION_PACK = 8

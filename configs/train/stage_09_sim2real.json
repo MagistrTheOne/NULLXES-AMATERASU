@@ -1,0 +1,6 @@
+{
+  "stage": 9,
+  "name": "sim2real",
+  "losses": {"mm": 1.0, "action": 1.0, "future": 1.0, "lang": 0.5, "agency_on": true},
+  "transition": "target-robot success under safety gate"
+}

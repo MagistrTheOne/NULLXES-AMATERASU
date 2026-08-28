@@ -1,0 +1,11 @@
+{
+  "profile": "B200-class",
+  "gpu_memory_gb": null,
+  "precision": "bf16",
+  "router_dtype": "fp32",
+  "tp": 4,
+  "pp": 4,
+  "ep": 8,
+  "activation_checkpoint": "slow",
+  "notes": "Supported topology profile. Hardware-profile driven, not baked into model math."
+}

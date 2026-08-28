@@ -1,0 +1,6 @@
+{
+  "stage": 6,
+  "name": "dynamics",
+  "losses": {"mm": 1.0, "action": 1.0, "future": 1.0, "lang": 0.5, "agency_on": false},
+  "transition": "L_future on k=1,4,8"
+}

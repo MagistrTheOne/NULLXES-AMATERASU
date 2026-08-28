@@ -1,0 +1,6 @@
+{
+  "stage": 8,
+  "name": "autonomous",
+  "losses": {"mm": 1.0, "action": 1.0, "future": 1.0, "lang": 0.5, "agency_on": true},
+  "transition": "injected-idle and recovery"
+}

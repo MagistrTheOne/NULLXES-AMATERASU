@@ -1,0 +1,14 @@
+{
+  "name": "research",
+  "weights": {
+    "observation_video": 0.18,
+    "hifi-umi-2k": 0.22,
+    "robot_traj": 0.20,
+    "bones-seed": 0.08,
+    "humanoid": 0.10,
+    "contact_hoi": 0.08,
+    "agency": 0.08,
+    "simulation": 0.06
+  },
+  "commercial": false
+}

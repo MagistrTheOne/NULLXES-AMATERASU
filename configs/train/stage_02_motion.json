@@ -1,0 +1,6 @@
+{
+  "stage": 2,
+  "name": "motion",
+  "losses": {"mm": 1.0, "action": 1.0, "lang": 0.5, "future": 0.0, "agency_on": false},
+  "transition": "NCES ADE on held-out mocap"
+}

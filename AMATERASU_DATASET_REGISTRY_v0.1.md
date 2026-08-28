@@ -105,7 +105,9 @@ Stages map to `configs/train/stage_01`–`stage_09`.
 | 47 | `hrdexdb` | QA | UNRESOLVED | manipulation | MULTI | 4 | 4 | 4 | P1 | paired human↔robot dexterous grasps + tactile on some hands |
 | 48 | `calvin-rlbench` | QA | COMMERCIAL | dynamics | SIM | 3 | 3 | 6, 9 | P2 | language-conditioned tabletop envs we can reset and branch |
 
-Red holes that must stay visible: **#5 and #6 have `scale = 0`.**
+Red holes that must stay visible: **#5 and #6 have `scale = 0`.** They are specified in [AMATERASU_AGENCY_DATASET_SPEC_v0.1.md](AMATERASU_AGENCY_DATASET_SPEC_v0.1.md) (AAC / ACPC). Hub family search is **stopped**.
+
+**Operational shortlist** (do not download all 48): DOWNLOAD/TRAIN vs RESEARCH TRAIN vs QA is Agency Spec §1. P0 hosts: HiFi, DROID (legal gate), audited OXE children, BONES (research), UnifoLM/Unitree Dex, DECO, EgoSuite (license text), OpenGraph **seed**, resettable sim **engines**, AAC+ACPC.
 
 ---
 
@@ -1065,22 +1067,21 @@ Worked examples:
 ## 7. Next sequence (locked)
 
 ```text
-Registry v0.1          ← Hub families 39–44 + off-Hub 45–48 locked; **stop shopping parquet**
+Registry v0.1          ← 48 families frozen; **no more Hub shopping**
         ↓
-AMATERASU Agency Dataset Spec v0.1
-  (label taxonomy, NULL policy, PVR fields: candidates / verifier / gate)
+AMATERASU Agency Dataset Spec v0.1   ← done (AAC / ACPC / IOR / boring)
         ↓
 AMATERASU Dynamics/Sim Dataset Spec v0.1
-  (PHYSICAL_COUNTERFACTUAL branches, PRLVR checkers, engine, assets)
+  (ACPC engines, assets, k-horizon, domain rand)
         ↓
 OXE subset license manifest (commercial-safe children only)
         ↓
-Converter contracts per P0/P1 FOUNDATION family
+Converter contracts per P0 DOWNLOAD/TRAIN hosts
         ↓
-Converters (HiFi, DROID, BONES/G1, …)
+Converters (sensors only; agency fields from AAC relabel)
 ```
 
-Do not write converters until Agency/Dynamics specs exist. Otherwise the mixer will happily emit imitation-only samples and call it EAFM.
+Do not write converters that invent `intent_label` from “human moved → ACT.” Dynamics spec still required before ACPC generation.
 
 Watchlist orgs (weekly, family grain): `simple-world-lab`, `bones-studio`, `unitreerobotics`, `USC-PSI-Lab`, `BAAI-Humanoid`, `X-Humanoid`, `x-humanoid-robomind`, `RoboCOIN`, `agibot-world`, `lerobot`, `nvidia`, `LightwheelAI`, `noitomrobotics`, `InternRobotics`, `OpenGraphLabs-Research`, `RealSourceData`, `FirstlyLabs`. Off-Hub: MPI TUE, OpenTouch-MIT, SNU HRDexDB.
 

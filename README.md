@@ -14,7 +14,8 @@ The job is to remain a physical agent when `instruction = NULL`: observe → per
 | --- | --- |
 | [AMATERASU_EAFM_ARCHITECTURE_v0.1.md](AMATERASU_EAFM_ARCHITECTURE_v0.1.md) | Frozen architecture |
 | [AMATERASU_32B_IMPLEMENTATION_BLUEPRINT.md](AMATERASU_32B_IMPLEMENTATION_BLUEPRINT.md) | Implementation map |
-| [AMATERASU_DATASET_REGISTRY_v0.1.md](AMATERASU_DATASET_REGISTRY_v0.1.md) | Which sources may emit `AMATERASUSample` |
+| [AMATERASU_DATASET_REGISTRY_v0.1.md](AMATERASU_DATASET_REGISTRY_v0.1.md) | Which sources may emit `AMATERASUSample` (48 families; shopping stopped) |
+| [AMATERASU_AGENCY_DATASET_SPEC_v0.1.md](AMATERASU_AGENCY_DATASET_SPEC_v0.1.md) | AAC + ACPC, ontology, boring episodes, IOR |
 
 Checkpoints are **native safetensors** (`amaterasu-ckpt-v1`), not Hugging Face `transformers`. Identity lives in `manifest.json` + `configs/model/amaterasu_32b_v0.1.json`. Init shards (`checkpoints/amaterasu_32b_v0.1_init/`, ~127 GB fp32 on disk) stay **local** — they are not in git.
 
@@ -33,9 +34,7 @@ Mixture `32/28/18/12/10` is a commercial *manipulation profile*, not the eternal
 
 ## Next (locked)
 
-Registry v0.1 → **Agency Dataset Spec** (PVR fields) → **Dynamics/Sim Dataset Spec** → OXE child license → converter contracts → converters.
-
-Hub shopping is frozen at families 39–48. Imitation-only samples are not EAFM.
+Registry shopping is **stopped**. Operational shortlist + AAC/ACPC live in the Agency spec. Next: **Dynamics/Sim Dataset Spec v0.1** (ACPC engines), then OXE child licenses, then converter contracts.
 
 ## Layout
 

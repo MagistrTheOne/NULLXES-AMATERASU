@@ -22,20 +22,20 @@ Checkpoints are **native safetensors** (`amaterasu-ckpt-v1`), not Hugging Face `
 
 We do not hand-build one giant “AMATERASU dataset”. Open corpora (HiFi, DROID, OXE, BONES, G1, …) pass **source converters** → `AMATERASUSample` → research/commercial mixers → 9-stage curriculum.
 
-Registry v0.1 is **29 families**, not Hub spam. Two axes:
+Registry v0.1 is **48 families**, not Hub spam. Two axes:
 
 - `TECHNICAL_ADMISSION`: FOUNDATION / QA / REJECT  
 - `LEGAL_ADMISSION`: COMMERCIAL / RESEARCH_ONLY / CONDITIONAL / UNRESOLVED  
 
-Provenance is a graph. A G1 set derived from BONES stays research-only even if a mirror says Apache-2.0. Two rows exist **now** with `scale = 0` (red holes): **Agency-NULLXES** and **Simulation-NULLXES**.
+Provenance is a graph. A G1 set derived from BONES stays research-only even if a mirror says Apache-2.0. Two rows exist **now** with `scale = 0` (red holes): **Agency-NULLXES** and **Simulation-NULLXES**. Nemotron Math is a **methods manual** (PVR / PRLVR), not olympiad pretrain — see registry §8.
 
 Mixture `32/28/18/12/10` is a commercial *manipulation profile*, not the eternal diet. Stage weights live in `configs/train/` and `configs/data/`.
 
 ## Next (locked)
 
-Registry v0.1 → coverage matrix (in the registry) → **Agency Dataset Spec** → **Dynamics/Sim Dataset Spec** → OXE child license manifest → converter contracts → converters.
+Registry v0.1 → **Agency Dataset Spec** (PVR fields) → **Dynamics/Sim Dataset Spec** → OXE child license → converter contracts → converters.
 
-Do not start converters before the two NULLXES specs. Imitation-only samples are not EAFM.
+Hub shopping is frozen at families 39–48. Imitation-only samples are not EAFM.
 
 ## Layout
 

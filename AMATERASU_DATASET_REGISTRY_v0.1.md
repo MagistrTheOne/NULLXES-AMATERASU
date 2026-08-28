@@ -33,9 +33,11 @@ SOURCE
   │
   ├─ License resolved? ───────────NO──> LEGAL = UNRESOLVED (quarantine)
   │
-  ├─ Physical signal useful? ─────NO──> REJECT
+  ├─ Language-only reasoning prior? ─YES─> not physical FOUNDATION; see §8
   │
-  ├─ NCES convertible? ───────────NO──> QA / later
+  ├─ Physical signal useful? ─────NO──> REJECT (unless language-only prior)
+  │
+  ├─ NCES convertible? ───────────NO──> QA / later / language-only
   │
   ├─ Duplicate information? ──────YES─> lower priority (keep if unique residual)
   │
@@ -50,7 +52,7 @@ Stages map to `configs/train/stage_01`–`stage_09`.
 
 ---
 
-## 1. Master table (29 families)
+## 1. Master table (48 families)
 
 | # | dataset_family | TECH | LEGAL | purpose | embodiment | NCES | ECD | stage | P | unique_information |
 | ---: | --- | --- | --- | --- | --- | ---: | ---: | --- | --- | --- |
@@ -83,6 +85,25 @@ Stages map to `configs/train/stage_01`–`stage_09`.
 | 27 | `habitat-humanoids` | REJECT | RESEARCH_ONLY | motion | SIM | 2 | 2 | — | P3 | SMPL-X avatars, NC; not NCES action |
 | 28 | `g1-hardware-cad` | REJECT | COMMERCIAL | — | G1 | 0 | 0 | — | P3 | printable parts, not trajectories |
 | 29 | `egodex` | QA | RESEARCH_ONLY | manipulation | HUMAN | 3 | 2 | 1–2 | P3 | ego dexterous; commercial mix already drops it |
+| 30 | `nemotron-math-proofs-v2` | QA | COMMERCIAL | reasoning | TEXT | 0 | 0 | 1, 7 | P1 | proof → verify → meta-verify **template** (not olympiad fuel) |
+| 31 | `nemotron-math-v2` | QA | CONDITIONAL | reasoning | TEXT | 0 | 0 | 1 | P2 | multi-trajectory + verification; **tiny slice only**, BY-SA split |
+| 32 | `nemotron-rl-math-v2` | QA | COMMERCIAL | method | TEXT | 0 | 0 | 6–7 | P1 | RLVR recipe — steal method, not 7.73k math problems |
+| 33 | `nemotron-sft-math-v4` | REJECT | CONDITIONAL | reasoning | TEXT | 0 | 0 | — | P3 | DeepSeek-V4-Pro CoT surface; identity risk for from-scratch |
+| 34 | `nemotron-math-rest` | REJECT | UNRESOLVED | reasoning | TEXT | 0 | 0 | — | P3 | CC-Math gated; OpenMath*; Prism; Ace; Goose; v1; GSM/MATH masked |
+| 35 | `egosuite-open100k` | FOUNDATION | CONDITIONAL | observation | HUMAN | 4 | 3 | 1–2 | P0 | commercial-trainable ego + 3D hand/body pose at 10k–100k h |
+| 36 | `hiphi` | FOUNDATION | RESEARCH_ONLY | motion | HUMAN | 5 | 4 | 2–4 | P1 | optical mocap HOI + object meshes (not BONES everyday) |
+| 37 | `interndata-a1` | FOUNDATION | RESEARCH_ONLY | manipulation | MULTI | 4 | 4 | 4–6 | P1 | 7433 h hybrid sim (rigid/articulated/deformable/fluid), NC-SA |
+| 38 | `maniskill-robocasa` | QA | COMMERCIAL | dynamics | SIM | 3 | 3 | 6, 9 | P2 | Apache/MIT **environment** for branches — not Hub MimicGen blob as fuel |
+| 39 | `ego-tactile-opengraph` | FOUNDATION | COMMERCIAL | contact | HUMAN | 4 | 2 | 3, 6 | P0 | human ego + 160-ch tactile gloves; **scale 1.28 h** (seed, not hours-fuel) |
+| 40 | `nvidia-g1-locomanip` | FOUNDATION | COMMERCIAL | dynamics | G1 | 5 | 5 | 4–6 | P1 | synthetic pick–navigate–place on G1 (Isaac Lab SDG) |
+| 41 | `realsource-world` | FOUNDATION | RESEARCH_ONLY | manipulation | HUMANOID | 4 | 4 | 5, 8 | P1 | 11k+ ep long-horizon dual-arm real; Hub tag **CC BY-NC-SA** |
+| 42 | `nvidia-grail-g1` | QA | CONDITIONAL | motion | HUMAN→G1 | 5 | 4 | 4 | P1 | HOI video → SMPL-X → G1 → physics/RL validation |
+| 43 | `firstly-household` | QA | COMMERCIAL | observation | HUMAN | 3 | 2 | 1 | P1 | CC BY ego household v0.1 sample (gated); not EgoSuite-scale |
+| 44 | `feel-tactile` | QA | COMMERCIAL | contact | HUMAN | 3 | 2 | — | P2 | Aria + fingertip tactile ~2.8 h; vision↔force QA |
+| 45 | `mpi-hoi` | FOUNDATION | RESEARCH_ONLY | contact | HUMAN | 5 | 3 | 2–4 | P1 | GRAB / ARCTIC / BEHAVE — whole-body+hand HOI **off-Hub** |
+| 46 | `opentouch-egotouch` | FOUNDATION | UNRESOLVED | contact | HUMAN | 4 | 2 | 3 | P1 | in-the-wild ego pressure gloves (GitHub/GDrive, not Hub) |
+| 47 | `hrdexdb` | QA | UNRESOLVED | manipulation | MULTI | 4 | 4 | 4 | P1 | paired human↔robot dexterous grasps + tactile on some hands |
+| 48 | `calvin-rlbench` | QA | COMMERCIAL | dynamics | SIM | 3 | 3 | 6, 9 | P2 | language-conditioned tabletop envs we can reset and branch |
 
 Red holes that must stay visible: **#5 and #6 have `scale = 0`.**
 
@@ -599,6 +620,363 @@ License verification date for all cards unless noted: **2026-08-28**.
 | priority | P3 |
 | notes | Keep for overlap check vs HiFi; do not dual-count. |
 
+### 2.30 `nemotron-math-proofs-v2`
+
+| field | value |
+| --- | --- |
+| source_org | NVIDIA |
+| primary_source | [nvidia/Nemotron-Math-Proofs-v2](https://huggingface.co/datasets/nvidia/Nemotron-Math-Proofs-v2) |
+| bucket / legal | QA / COMMERCIAL |
+| purpose | **REASONING_PRIOR** (language FFN only) |
+| embodiment | TEXT — **not** a body |
+| scale | **VERIFIED** 82,737 samples / 5,752 problems. Traces: proof, verification, meta-verification. Generator: DeepSeek-V4-Pro Max. Problems from Proofs-v1 AoPS subset |
+| video / proprio / actions / tactile | none |
+| language | full traces |
+| NCES / ECD | 0 / 0 |
+| stage | 1 (quant/constraint language), 7 (supervision *pattern* only) |
+| license | CC BY 4.0 **VERIFIED** (Hub) |
+| commercial_safe | YES |
+| license_verified | 2026-08-28, Hub card |
+| derived_from | AoPS problems + synthetic traces |
+| priority | P1 |
+| unique_information | generate → verify → verify-the-verifier as a **supervision template** |
+| notes | Best Nemotron steal. Maps to intent → predicted Z → Qθ → gate. Do **not** convert into NCES. Do **not** run CoT at EAC runtime. Cap language mix; 82k is already more math than AMATERASU needs if ingested whole. |
+
+### 2.31 `nemotron-math-v2`
+
+| field | value |
+| --- | --- |
+| source_org | NVIDIA |
+| primary_source | [nvidia/Nemotron-Math-v2](https://huggingface.co/datasets/nvidia/Nemotron-Math-v2), arXiv:2512.15489 |
+| bucket / legal | QA / CONDITIONAL |
+| purpose | REASONING_PRIOR |
+| embodiment | TEXT |
+| scale | **VERIFIED** ~347k problems / ~7M trajectories. Dual license tags: CC BY 4.0 **and** CC BY-SA 4.0 |
+| NCES / ECD | 0 / 0 |
+| stage | 1, tiny |
+| license | mixed BY / BY-SA — **sample-level provenance required** |
+| commercial_safe | CONDITIONAL: commercial mix **AoPS CC-BY only**; drop StackExchange BY-SA until counsel |
+| license_verified | 2026-08-28, Hub `license: cc-by-4.0, cc-by-sa-4.0` |
+| derived_from | AoPS + Math StackExchange/MathOverflow |
+| priority | P2 |
+| unique_information | one problem → many trajectories → verification filter |
+| notes | Structure is EAC-shaped. **7M traces would colonize Language FFNs.** Admit a small filtered slice (ESTIMATE: 10k–50k problems, verified, multi-mode), not the blob. Not Physical HPT. |
+
+### 2.32 `nemotron-rl-math-v2`
+
+| field | value |
+| --- | --- |
+| source_org | NVIDIA |
+| primary_source | [nvidia/Nemotron-RL-Math-v2](https://huggingface.co/datasets/nvidia/Nemotron-RL-Math-v2) |
+| bucket / legal | QA / COMMERCIAL |
+| purpose | **method card**, not a corpus |
+| scale | **VERIFIED** ~7.73k problems, held out from SFT-Math-v4, verifiable answers |
+| license | CC BY 4.0 **VERIFIED** |
+| commercial_safe | YES (as recipe; ingesting the 7k is optional and low value) |
+| NCES / ECD | 0 / 0 |
+| stage | 6–7 as **PRLVR procedure**, not as math RL |
+| priority | P1 |
+| unique_information | RL from **verifiable** rewards — answer checker, not LLM judge |
+| notes | Steal the idea: physical state is the checker. Architecture already forbids scalar reward as the *definition* of EAC. PRLVR is a training signal for dynamics/flow/gate calibration. It does not replace Qθ/GCIS. |
+
+### 2.33 `nemotron-sft-math-v4`
+
+| field | value |
+| --- | --- |
+| source_org | NVIDIA |
+| primary_source | [nvidia/Nemotron-SFT-Math-v4](https://huggingface.co/datasets/nvidia/Nemotron-SFT-Math-v4) (~545k) |
+| bucket / legal | REJECT / CONDITIONAL |
+| license | CC BY 4.0 + CC BY-SA 4.0 **VERIFIED** |
+| unique_information | **none vs Math-v2** plus DeepSeek-V4-Pro High CoT style |
+| notes | From-scratch AMATERASU does not inherit Llama weights. Flooding `lm_head` with another lab’s reasoning surface is the same sin in text. Skip. If we ever need SFT math, take a BY-only slice of Math-v2, not this distill. |
+
+### 2.34 `nemotron-math-rest`
+
+| field | value |
+| --- | --- |
+| source_org | NVIDIA |
+| primary_source | collection [nvidia/nemotron-math-and-reasoning](https://huggingface.co/collections/nvidia/nemotron-math-and-reasoning) remainder |
+| bucket / legal | REJECT / UNRESOLVED (CC-Math: NVIDIA Data Agreement, gated) |
+| children | CC-Math-v1 (~190M, gated `other`); OpenMathReasoning (~5.68M); OpenMathInstruct-1/2; PrismMath (1M); CrossThink; GooseReason-0.7M; AceReason-Math / AceReason-1.1-SFT; Math-Proofs-v1; HumanReasoning (~250); GSM8K/MATH masked; RL-math-* extras; Cascade-RL-Math; ReasoningGym |
+| unique_information | **duplicate olympiad/CoT signal** vs v2, or worse license (CC-Math), or toy eval |
+| notes | One family, one reject. HumanReasoning 250 can sit as optional CoT-style QA if we ever compare human vs synthetic traces — not a mix row. |
+
+### 2.35 `egosuite-open100k`
+
+| field | value |
+| --- | --- |
+| source_org | Lightwheel AI |
+| primary_source | [EgoStandard](https://huggingface.co/datasets/LightwheelAI/EgoStandard) + [EgoPro](https://huggingface.co/datasets/LightwheelAI/EgoPro); sample [EgoDemo](https://huggingface.co/datasets/LightwheelAI/EgoDemo) 50 h. Blog: [EgoSuite-Open100K](https://huggingface.co/blog/LightwheelAI/egosuite-open100k) |
+| bucket / legal | FOUNDATION / CONDITIONAL |
+| purpose | observation (+ hand/body pose → NCES) |
+| embodiment | HUMAN |
+| scale | **VERIFIED** card/blog: 10,000 h live now; 100,000 h planned (EgoStand 80k + body 10k + EgoPro 10k). 15k+ tasks/scenes. Do not double-count LeRobot and MCAP of the same episode |
+| video | head (Standard); head+wrist (Pro). Faces/PII blurred **VERIFIED** (card) |
+| proprio | 3D hand pose; body subset = full-body |
+| actions | human demonstration, not robot joints |
+| language | event-level semantics on subsets |
+| NCES / ECD | 4 / 3 |
+| stage | 1–2 |
+| license | `commercial-training-no-resale-v1.0` **VERIFIED** (Hub `license: other`). Gated, access review 2–3 days |
+| commercial_safe | CONDITIONAL: train commercial **weights** OK per card/blog; **no dataset resale**; read full license text before mix |
+| license_verified | 2026-08-28, Hub cards + HF blog |
+| derived_from | original Lightwheel capture |
+| priority | P0 |
+| unique_information | commercial-trainable in-the-wild ego at HiFi-beating hours, with hand pose (closes Ego4D hole in commercial mix) |
+| notes | One family. EgoDemo = converter QA only. Not a substitute for HiFi bimanual EE; complementary: environment + hands in the wild. |
+
+### 2.36 `hiphi`
+
+| field | value |
+| --- | --- |
+| source_org | Noitom / ModalityNet |
+| primary_source | [noitomrobotics/HiPHI](https://huggingface.co/datasets/noitomrobotics/HiPHI), [project](https://noitom-robotics.github.io/hiphi/), arXiv:2608.16222 |
+| bucket / legal | FOUNDATION / RESEARCH_ONLY |
+| purpose | motion + contact/HOI |
+| embodiment | HUMAN (BVH) + object meshes |
+| scale | **ESTIMATE** ~617.5 h optical mocap (secondary reports); Hub size 10K–100K. ~532 GB usedStorage **VERIFIED** API |
+| video | not the primary layer (mocap + meshes) |
+| proprio / actions | standardized BVH; HOI sync |
+| tactile_contact | object interaction, not tactile arrays |
+| NCES / ECD | 5 / 4 |
+| stage | 2–4 |
+| license | ModalityNet Open Research License **VERIFIED** (`license: other`). Commercial via info@modalitynet.com |
+| commercial_safe | NO until separate commercial license |
+| license_verified | 2026-08-28, Hub card |
+| derived_from | original optical capture |
+| priority | P1 |
+| unique_information | whole-body **+ object meshes** for HOI; BONES is everyday motion without this object layer |
+| notes | Pair with BONES, do not replace. Meshes feed `simulation-nullxes` / ArtVIP-class props. |
+
+### 2.37 `interndata-a1`
+
+| field | value |
+| --- | --- |
+| source_org | InternRobotics |
+| primary_source | [InternRobotics/InternData-A1](https://huggingface.co/datasets/InternRobotics/InternData-A1) |
+| bucket / legal | FOUNDATION / RESEARCH_ONLY |
+| purpose | manipulation / dynamics (sim-heavy) |
+| embodiment | MULTI (Genie-1, Agilex Aloha, ARX Lift-2, Franka) |
+| scale | **VERIFIED** ~630k traj / 7,433 h / 70 tasks / 227 scenes; rigid, articulated, deformable, fluid |
+| video | sim cameras + real post-train (rolling) |
+| proprio / actions | EE/TCP, intrinsics/extrinsics on `sim_updated` |
+| NCES / ECD | 4 / 4 |
+| stage | 4–6 (research mix) |
+| license | CC BY-NC-SA 4.0 **VERIFIED** (community license on card) |
+| commercial_safe | NO (NC + ShareAlike) |
+| derived_from | InternManip sim + real (real still landing) |
+| priority | P1 |
+| unique_information | high-fidelity **sim** hours with deformables/fluids and long-horizon — not DROID clone |
+| notes | Same legal bucket as AgiBot. Useful for research dynamics; **not** commercial `simulation-nullxes` (we generate branches ourselves; this is imitation-in-sim). |
+
+### 2.38 `maniskill-robocasa`
+
+| field | value |
+| --- | --- |
+| source_org | Hao Su lab / RoboCasa |
+| primary_source | [haosulab/ManiSkill](https://huggingface.co/datasets/haosulab/ManiSkill) / ManiSkill2 Apache-2.0; RoboCasa ports MIT/Apache (e.g. `daixianjie/robocasa_*_lerobot`) |
+| bucket / legal | QA / COMMERCIAL |
+| purpose | dynamics (engine + demos) |
+| embodiment | SIM (Panda etc.) |
+| scale | 4M+ demo frames **VERIFIED** ManiSkill2 card; RoboCasa human ~1382 ep / mimicgen larger |
+| license | Apache-2.0 / MIT on sampled official cards |
+| commercial_safe | YES for official ManiSkill; check each RoboCasa child |
+| NCES / ECD | 3 / 3 |
+| stage | 6, 9 |
+| priority | P2 |
+| unique_information | **resettable sim** we can branch (PRLVR); demos themselves are imitation |
+| notes | Use as **environment**, not as 32B mixture weight. Do **not** ingest Hub blobs like `myconnects/robocasa-pretrain` (~568k MimicGen+human traj) as AMATERASU fuel — sibling branches must be generated from a resettable checkpoint, not from another lab’s successful demos. |
+
+### 2.39 `ego-tactile-opengraph`
+
+| field | value |
+| --- | --- |
+| source_org | OpenGraph Labs |
+| primary_source | [OpenGraphLabs-Research/ego-tactile-manipulation](https://huggingface.co/datasets/OpenGraphLabs-Research/ego-tactile-manipulation) |
+| bucket / legal | FOUNDATION / COMMERCIAL |
+| purpose | contact (human ego tactile seed) |
+| embodiment | HUMAN |
+| scale | **VERIFIED** card: 72 episodes / **1.28 h** / 138,629 frames. 160 tactile channels (80/hand), raw ~90 Hz synced to 1080p ego; head+wrist IMU. Action boundaries from contact/grip-force |
+| video | head-mounted 1080p |
+| tactile_contact | two gloves, 160 ch |
+| language | grasp/action/object annotations |
+| NCES / ECD | 4 / 2 |
+| stage | 3, 6 |
+| license | CC BY 4.0 **VERIFIED** (Hub) |
+| commercial_safe | YES |
+| license_verified | 2026-08-28, Hub card |
+| derived_from | original capture |
+| priority | P0 |
+| unique_information | human ego RGB + dense two-hand tactile + contact-grounded action cuts |
+| notes | Hours-class **insufficient** for mixture weight. Exception to scale gate: **seed/reference** for `Z_contact` annotation pipeline. Pair with DECO-50 (robot tactile). Do not pretend 1.28 h is HiFi. |
+
+### 2.40 `nvidia-g1-locomanip`
+
+| field | value |
+| --- | --- |
+| source_org | NVIDIA |
+| primary_source | [nvidia/g1_locomanip_dataset](https://huggingface.co/datasets/nvidia/g1_locomanip_dataset) |
+| bucket / legal | FOUNDATION / COMMERCIAL |
+| purpose | dynamics / cross-skill G1 |
+| embodiment | G1 (synthetic Isaac Lab SDG) |
+| scale | Hub 100K–1M band; zip ~478 MB **VERIFIED** API. Exact episode count **UNVERIFIED** this pass |
+| video | synthetic |
+| proprio / actions | pick → navigate obstacles → place (loco + manip in one episode) |
+| NCES / ECD | 5 / 5 |
+| stage | 4–6 |
+| license | CC BY 4.0 **VERIFIED** |
+| commercial_safe | YES |
+| derived_from | Isaac Lab SDG on teleop seeds |
+| priority | P1 |
+| unique_information | G1 **locomotion + object transport as one physical episode** (not arm-only, not mocap-only) |
+| notes | Complements UnifoLM-WBT (real) and Everyday. Not a replacement for real G1. Good NCES stress: root SE(3) + legs + arms + object. |
+
+### 2.41 `realsource-world`
+
+| field | value |
+| --- | --- |
+| source_org | RealSource |
+| primary_source | [RealSourceData/RealSource-World](https://huggingface.co/datasets/RealSourceData/RealSource-World) |
+| bucket / legal | FOUNDATION / RESEARCH_ONLY |
+| purpose | manipulation (long-horizon real humanoid) |
+| embodiment | RS-02 dual-arm humanoid |
+| scale | **VERIFIED** card: 14M+ frames, 11,428+ episodes, 35 tasks, 3 cameras (head+wrists), 30 FPS, 71-D proprio (q, qd, qdd, force, torque, EE) |
+| language | atomic skill segmentation + quality assessment |
+| NCES / ECD | 4 / 4 |
+| stage | 5, 8 (research) |
+| license | **CC BY-NC-SA 4.0 VERIFIED** (Hub tag 2026-08-28). Not UNRESOLVED |
+| commercial_safe | NO |
+| license_verified | 2026-08-28, Hub `license: cc-by-nc-sa-4.0` |
+| derived_from | original RS-02 teleop |
+| priority | P1 |
+| unique_information | long-horizon dual-arm real + skill cuts + quality labels (memory/recovery *candidates*, not WAIT labels) |
+| notes | Moves long-horizon from G toward W **in research mix only**. Same legal class as AgiBot/InternData-A1. |
+
+### 2.42 `nvidia-grail-g1`
+
+| field | value |
+| --- | --- |
+| source_org | NVIDIA Physical AI |
+| primary_source | [nvidia/PhysicalAI-Robotics-Locomanipulation-GRAIL](https://huggingface.co/datasets/nvidia/PhysicalAI-Robotics-Locomanipulation-GRAIL), arXiv:2606.05160 |
+| bucket / legal | QA (FOUNDATION-candidate) / CONDITIONAL |
+| purpose | motion (human→G1 physics-validated) |
+| embodiment | HUMAN HOI → G1 |
+| scale | Hub 1K–10K **ESTIMATE**; includes source video, SMPL-X+object 6DoF, retarget, post-RL object traj, USD |
+| NCES / ECD | 5 / 4 |
+| stage | 4 |
+| license | Current Hub tag **Apache-2.0 VERIFIED** (2026-08-28). Older README blob cited NVIDIA Open Model License — **do not admit commercial until LICENSE file vs model weights is split** |
+| commercial_safe | CONDITIONAL |
+| derived_from | synthetic HOI video → reconstruction → Isaac → RL tracking |
+| priority | P1 |
+| unique_information | full chain human HOI → canonical body → G1 → physics check (NCES converter gold) |
+| notes | Use to test whether NCES preserves physical semantics. Tracking policy checkpoints on the repo are **not** AMATERASU weights. |
+
+### 2.43 `firstly-household`
+
+| field | value |
+| --- | --- |
+| source_org | Firstly Labs |
+| primary_source | [FirstlyLabs/Firstly-household-v01](https://huggingface.co/datasets/FirstlyLabs/Firstly-household-v01) |
+| bucket / legal | QA / COMMERCIAL |
+| purpose | observation |
+| embodiment | HUMAN |
+| scale | **VERIFIED** v0.1 sample: dishwashing + laundry folding; card: “small sample release”; gated `auto`; ~12 pov mp4 siblings. Not hours-class |
+| video | egocentric 30 FPS LeRobot v3; hand keypoints; VLM phase tags |
+| license | CC BY 4.0 **VERIFIED** |
+| commercial_safe | YES for this sample **if** gated agreement matches the tag |
+| NCES / ECD | 3 / 2 |
+| stage | 1 |
+| priority | P1 |
+| unique_information | commercial-tagged household ego (second supplier next to EgoSuite) |
+| notes | Promotion to FOUNDATION only after hours/diversity + full access text. One CC BY tag ≠ production mixer. |
+
+### 2.44 `feel-tactile`
+
+| field | value |
+| --- | --- |
+| source_org | FEEL authors |
+| primary_source | [FeelAuthors/FEEL-Benchmark](https://huggingface.co/datasets/FeelAuthors/FEEL-Benchmark) |
+| bucket / legal | QA / COMMERCIAL |
+| purpose | contact (benchmark) |
+| embodiment | HUMAN |
+| scale | **VERIFIED** 3,317 episodes / ~2.8 h / 52 trials. Aria RGB + MPS hands + fingertip tactile (sessions up to ~900 Hz) |
+| license | CC BY 4.0 **VERIFIED** |
+| commercial_safe | YES |
+| NCES / ECD | 3 / 2 |
+| stage | converter QA |
+| priority | P2 |
+| unique_information | vision contact prediction ↔ fingertip force (not foundation hours) |
+| notes | Complements OpenGraph (dense gloves vs fingertips). |
+
+### 2.45 `mpi-hoi`
+
+| field | value |
+| --- | --- |
+| source_org | MPI-IS / Tübingen (GRAB, ARCTIC); MPI-INF (BEHAVE) |
+| primary_source | [GRAB](https://grab.is.tue.mpg.de/) · [ARCTIC](https://arctic.is.tue.mpg.de) ([code](https://github.com/zc-alexfan/arctic)) · [BEHAVE](https://virtualhumans.mpi-inf.mpg.de/behave/) |
+| bucket / legal | FOUNDATION / RESEARCH_ONLY |
+| purpose | contact / whole-body HOI |
+| embodiment | HUMAN (SMPL-X / SMPL+H) + objects |
+| scale | GRAB: 10 subjects × 51 objects; ARCTIC: bimanual articulated; BEHAVE: 321 seq, 4 Kinect, 20 objects **ESTIMATE** from project pages |
+| license | MPI research agreements; commercial `ps-licensing@tue.mpg.de` |
+| commercial_safe | NO |
+| NCES / ECD | 5 / 3 |
+| stage | 2–4 research |
+| priority | P1 |
+| unique_information | laboratory HOI with **mesh contact** (GRAB whole-body grasp, ARCTIC bimanual articulated, BEHAVE RGBD+contact) |
+| notes | **Off-Hub.** Complements HiPHI (Noitom) and BONES (no object meshes). One family, three children — do not Hub-mirror illegally. |
+
+### 2.46 `opentouch-egotouch`
+
+| field | value |
+| --- | --- |
+| source_org | MIT OpenTouch; EgoTouch / TouchAnything |
+| primary_source | [OpenTouch-MIT/opentouch](https://github.com/OpenTouch-MIT/opentouch) (data via GDrive script); [Jiayi459/TouchAnything](https://github.com/Jiayi459/TouchAnything) EgoTouch (~208 tasks / 1891 ep / ~2M frames **ESTIMATE** paper table) |
+| bucket / legal | FOUNDATION / UNRESOLVED |
+| purpose | contact |
+| embodiment | HUMAN |
+| scale | OpenTouch: in-the-wild ego RGB + full-hand pressure + pose (GDrive). EgoTouch: multi-view + 16×16 pressure/palm **ESTIMATE** |
+| license | **read GitHub LICENSE / paper** before mix — not Hub CC-BY |
+| commercial_safe | UNRESOLVED |
+| NCES / ECD | 4 / 2 |
+| stage | 3 |
+| priority | P1 |
+| unique_information | in-the-wild **pressure maps** at more hours than OpenGraph 1.28 h, if license clears |
+| notes | **Off-Hub.** If license is research-only, keep as seed next to OpenGraph commercial 1.28 h. |
+
+### 2.47 `hrdexdb`
+
+| field | value |
+| --- | --- |
+| source_org | SNU VCL |
+| primary_source | [snuvclab.github.io/HRDexDB](https://snuvclab.github.io/HRDexDB/), arXiv:2604.14944 |
+| bucket / legal | QA / UNRESOLVED |
+| purpose | manipulation (cross-embodiment grasp) |
+| embodiment | HUMAN + Inspire/Allegro etc. |
+| scale | **VERIFIED** project: 2.1k trials, 100 objects, 23 cameras; tactile on some robot hands |
+| license | not on Hub this pass |
+| commercial_safe | UNRESOLVED |
+| NCES / ECD | 4 / 4 |
+| stage | 4 |
+| priority | P1 |
+| unique_information | **paired** human and robot dexterous grasp on same objects |
+| notes | **Off-Hub.** Converter gold for human hand → NCES → robot hand. Not hours-fuel. |
+
+### 2.48 `calvin-rlbench`
+
+| field | value |
+| --- | --- |
+| source_org | CALVIN (ETH); RLBench (Imperial) |
+| primary_source | CALVIN GitHub + RLBench CoppeliaSim |
+| bucket / legal | QA / COMMERCIAL (**ESTIMATE** — confirm each LICENSE) |
+| purpose | dynamics (resettable language tabletop) |
+| embodiment | SIM |
+| unique_information | same as ManiSkill: **we branch**, we do not download 500k successes |
+| NCES / ECD | 3 / 3 |
+| stage | 6, 9 |
+| priority | P2 |
+| notes | **Off-Hub engines.** Sibling of `maniskill-robocasa`. |
+
 ---
 
 ## 3. Coverage matrix (v0.1)
@@ -609,14 +987,14 @@ Legend: **S** strong · **W** weak · **G** gap (including scale=0)
 
 |  | observe | act | NULL instruction | contact | long horizon |
 | --- | :---: | :---: | :---: | :---: | :---: |
-| **human, real, short** | S Ego4D/EPIC (research) · W HiFi | S HiFi | G | W HiFi visual contact | G |
+| **human, real, short** | S EgoSuite (commercial COND) / Ego4D (research) · W HiFi | S HiFi | G | W HiFi visual contact | W EgoSuite long tasks **ESTIMATE** |
 | **human, whole-body** | W (mocap, little RGB) | S BONES | G | W | W |
 | **Franka, real** | S DROID | S DROID | G | G | W |
 | **multi-robot, real** | S OXE/RoboMIND | S OXE | G | W | W |
 | **G1, real, arms** | S Unitree Dex / RoboCOIN / Everyday | S same | G | W | W IKEA |
 | **G1, real, whole-body** | S UnifoLM-WBT | S UnifoLM-WBT | G | W | W |
-| **human→G1 paired** | W MOSAIC | S MOSAIC | G | G | G |
-| **tactile** | S DECO-50 | S DECO-50 | G | S DECO-50 | G |
+| **human→G1 paired** | W MOSAIC · S-ish GRAIL | S GRAIL/MOSAIC | G | W | W locomanip synth |
+| **tactile** | S OpenGraph ego + DECO robot | S same | G | S OpenGraph/DECO · W FEEL/OpenTouch | G |
 | **sim, branched futures** | G | G | G | W ArtVIP assets | G |
 | **agency (ACT/HOLD/WAIT)** | G | G | G | G | G |
 
@@ -629,14 +1007,17 @@ Collapsed into EAFM language:
 | Many robots → one NCES | **S** OXE (legal messy) |
 | Human whole-body prior | **S** BONES (not commercial) |
 | G1 whole-body grounding | **S** UnifoLM-WBT + Everyday |
-| Tactile | **W/S** DECO-50 only |
-| In-the-wild observe | **S** Ego4D — **G** commercial-safe substitute |
+| Tactile | **S** DECO-50 (robot) + OpenGraph (human ego seed) · **W** FEEL/OpenTouch |
+| In-the-wild observe | **S** EgoSuite (commercial COND) · Firstly v0.1 QA · Ego4D research |
+| G1 loco+manip one episode | **S** nvidia-g1-locomanip (synth) · real still weaker |
+| Long episode + memory + recovery | **W** RealSource (research NC-SA) · still **G** for WAIT/recovery labels |
 | `instruction = NULL` | **G** |
 | Deliberate non-intervention | **G** (`agency-nullxes`) |
 | Counterfactual Z futures | **G** (`simulation-nullxes`) |
-| Long episode + memory + recovery | **G** |
+| Multi-candidate + verifiable outcome | **G** physical; **W** language via Proofs-v2 template |
+| Meta-verification / calibration | **G** (heads exist; labels do not) |
 
-Commercial mix 32/28/18/12/10 is a **manipulation profile**. The matrix says why it cannot be the eternal diet: 78% act-imitation, almost no NULL, no branches, no agency.
+Commercial mix 32/28/18/12/10 is a **manipulation profile**. The matrix says why it cannot be the eternal diet: 78% act-imitation, almost no NULL, no branches, no agency. Nemotron does **not** fill those cells. It only shows how to *label* branches once sim exists.
 
 ---
 
@@ -644,13 +1025,14 @@ Commercial mix 32/28/18/12/10 is a **manipulation profile**. The matrix says why
 
 1. **Agency labels on real episodes** — OBSERVE/HOLD/WAIT/ACT, persistence, recovery, DEFER/BLOCK/ALLOW. Host data exists; labels do not.
 2. **Branched sim futures** — same Z, four interventions, four futures.
-3. **Commercial-safe egocentric observation** — without Ego4D/EPIC, stage-1 commercial is HiFi-only vision.
+3. **Commercial-safe egocentric observation** — EgoSuite-Open100K + Firstly v0.1 sample; EgoSuite license text still required.
 4. **NULL-instruction long episodes** — idle, wait-for-human, resume.
-5. **Tactile beyond 50 h / 4 scenes.**
+5. **Tactile hours-class** — OpenGraph is a 1.28 h seed; DECO-50 is robot; OpenTouch/EgoTouch off-Hub still UNRESOLVED. Still not 50 h of *human* tactile.
 6. **OXE child license manifest** — blocks commercial `oxe_cc_by` from being honest.
 7. **DROID / Bridge Hub-tag vs paper-term reconcile.**
+8. **Physical Verifiable Reasoning labels** — not math tokens: `PHYSICAL_VERIFICATION` and `PHYSICAL_COUNTERFACTUAL` on NULLXES sim/real (scale 0 until Agency/Dynamics specs).
 
-Gaps 1–2 are datasets we **generate**. Gaps 3–6 are audits + filters. Gap 7 is legal hygiene.
+Gaps 1–2 and 8 are datasets we **generate**. Gaps 3–6 are audits + filters. Gap 7 is legal hygiene. Do not fill gap 8 with Nemotron JSONL.
 
 ---
 
@@ -683,15 +1065,13 @@ Worked examples:
 ## 7. Next sequence (locked)
 
 ```text
-Registry v0.1          ← you are here
-        ↓
-Coverage matrix freeze (this §3; iterate only with new families)
+Registry v0.1          ← Hub families 39–44 + off-Hub 45–48 locked; **stop shopping parquet**
         ↓
 AMATERASU Agency Dataset Spec v0.1
-  (label taxonomy, host corpora, gold subset size, NULL policy)
+  (label taxonomy, NULL policy, PVR fields: candidates / verifier / gate)
         ↓
 AMATERASU Dynamics/Sim Dataset Spec v0.1
-  (branching protocol, NFE, engine, asset licenses)
+  (PHYSICAL_COUNTERFACTUAL branches, PRLVR checkers, engine, assets)
         ↓
 OXE subset license manifest (commercial-safe children only)
         ↓
@@ -702,4 +1082,52 @@ Converters (HiFi, DROID, BONES/G1, …)
 
 Do not write converters until Agency/Dynamics specs exist. Otherwise the mixer will happily emit imitation-only samples and call it EAFM.
 
-Watchlist orgs (weekly, family grain): `simple-world-lab`, `bones-studio`, `unitreerobotics`, `USC-PSI-Lab`, `BAAI-Humanoid`, `X-Humanoid`, `x-humanoid-robomind`, `RoboCOIN`, `agibot-world`, `lerobot`, `NVlabs`.
+Watchlist orgs (weekly, family grain): `simple-world-lab`, `bones-studio`, `unitreerobotics`, `USC-PSI-Lab`, `BAAI-Humanoid`, `X-Humanoid`, `x-humanoid-robomind`, `RoboCOIN`, `agibot-world`, `lerobot`, `nvidia`, `LightwheelAI`, `noitomrobotics`, `InternRobotics`, `OpenGraphLabs-Research`, `RealSourceData`, `FirstlyLabs`. Off-Hub: MPI TUE, OpenTouch-MIT, SNU HRDexDB.
+
+---
+
+## 8. Nemotron steal — Physical Verifiable Reasoning (locked)
+
+NVIDIA collection is a **methods manual**, not a math pretrain dump. AMATERASU does not become an olympiadist with legs. We do not ingest Nemotron into Physical HPT. We do not add a Nemotron module to the freeze.
+
+**Spec name:** Physical Verifiable Reasoning (PVR) — how Agency/Dynamics samples are supervised.  
+**Procedure name:** PRLVR — Physical Reinforcement Learning from Verifiable Results. Training recipe, not a network.
+
+Architecture already has candidate intents, latent futures, Qθ, constraint gate, and “no scalar reward as EAC definition”. Nemotron adds how to *supervise unused branches* and how to get a checker **without an LLM judge**.
+
+### Three data types (not Hub repos)
+
+| type | what | who produces | NCES |
+| --- | --- | --- | --- |
+| `REASONING_PRIOR` | tiny language mix: multi-candidate + verify + meta-verify *in text* | Proofs-v2; optional tiny BY-only Math-v2 slice | 0 |
+| `PHYSICAL_VERIFICATION` | one realized rollout; sensors/sim check success/constraints | NULLXES real + sim (`agency-nullxes` / `simulation-nullxes`) | 4–5 |
+| `PHYSICAL_COUNTERFACTUAL` | one `Z_t` → I₁ / I₂ / WAIT / HOLD → several `Z(t+k)` + pass/fail/defer | NULLXES sim branches | 4–5 |
+
+Last two are the red holes. They matter more than the entire Nemotron collection.
+
+### Mapping (supervision only)
+
+```text
+Nemotron:  problem → traces A/B/C → verify answer
+AMATERASU: Z_t     → intents I₁/I₂/WAIT/HOLD → predicted Ẑ → gate
+
+Nemotron:  proof → verification → meta-verification
+AMATERASU: intent → dynamics → Qθ + constraint → ALLOW/DEFER/BLOCK
+           meta-verify = calibration (ECE / uncertainty heads), not a third CoT model
+
+Nemotron RLVR:  answer == 42
+AMATERASU PRLVR: cup upright ∧ stable ∧ no collision ∧ human-safe
+```
+
+Textual rationale may exist in **training** language loss. Runtime EAC **must not** generate a kilometer of CoT before grasping a cup.
+
+PRLVR must not replace EAC with a success bit. Architecture: reward hacking is a known failure; the gate stays architectural. Verifier scores train dynamics, flow, and gate *labels*. They do not define agency.
+
+### Hard no
+
+- CC-Math-v1 (gated NVIDIA training agreement, Phi-4 warning, no redistribution)
+- SFT-Math-v4 / OpenMath* / Prism / Ace / Goose as foundation language
+- 7M Math-v2 trajectories as a mixture weight
+- Converting math JSONL into `AMATERASUSample` NCES fields
+
+Agency Dataset Spec and Dynamics/Sim Spec must instantiate PVR sample fields (`candidates`, `predicted_Z`, `verifier_bits`, `gate_label`). That is the next document, not a converter.

@@ -58,9 +58,13 @@ def iter_parquet_records(path: Path, max_episodes: int, max_rows: int) -> Iterat
 
 
 def iter_hifi_dir(root: Path, max_episodes: int = 64, max_rows: int = 4096) -> Iterator[dict]:
-    files = sorted(root.rglob("*.parquet"))
+    files = sorted(root.rglob("*.parquet")) if root.exists() else []
     if not files:
-        raise FileNotFoundError(f"no parquet under {root}")
+        raise FileNotFoundError(
+            f"no parquet under {root}. "
+            "Run: python3 scripts/materialize_hifi.py --output /workspace/data/hifi_cap "
+            "--max-bytes 536870912 --max-files 2"
+        )
     remaining_ep = max_episodes
     remaining_rows = max_rows
     seen_eps: set[tuple[str, int]] = set()

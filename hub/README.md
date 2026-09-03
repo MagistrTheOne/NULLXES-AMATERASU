@@ -74,10 +74,11 @@ From-scratch Embodied Agency Foundation Model. Native format `amaterasu-ckpt-v1`
 | `README.md` | this card |
 | `amaterasu_32b_v0.1.json` | freeze config (native, not Transformers `config.json`) |
 | `manifest.json` | `amaterasu-ckpt-v1` identity + weight map |
+| `model.safetensors.index.json` | Hub shard index (same weight map). Not Transformers. |
 | `*.safetensors` | 51 freeze shards, ~119 GB fp32. `nces.safetensors` is Circuit-0 overlay |
 | `metrics.json` | circuit-0 run metrics |
 
-No Transformers `config.json`. No `model.safetensors.index.json`. Hub Parameters chip, if present, is from safetensors headers. Source of truth is `frozen_total` above.
+No Transformers `config.json`. Hub Parameters chip reads `model.safetensors.index.json` + shard headers. Source of truth is still `frozen_total` above.
 
 ## Circuit-0 (this release)
 

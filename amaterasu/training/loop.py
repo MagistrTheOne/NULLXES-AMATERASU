@@ -12,6 +12,7 @@ from amaterasu.model.accounting import account, assert_frozen_total
 from amaterasu.model.flow.matching import pack_nces_action
 from amaterasu.tensors.sample import AMATERASUBatch
 from amaterasu.training.curriculum import TrainConfig, weights_for_stage
+from amaterasu.training.losses import compute_losses
 from amaterasu.checkpoint.safetensors_io import save_module
 from amaterasu.utils.logging import log
 from amaterasu.utils.profile import Profiler

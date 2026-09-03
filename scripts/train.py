@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from pathlib import Path
 
@@ -11,6 +12,7 @@ if str(ROOT) not in sys.path:
 import torch
 
 from amaterasu.checkpoint.resume import resume_modules
+from amaterasu.checkpoint.safetensors_io import save_module
 from amaterasu.config.model_config import Amaterasu32BConfig
 from amaterasu.data.hifi_batches import iter_circuit0_batches
 from amaterasu.distributed.topologies import load_topology
@@ -32,6 +34,8 @@ def main() -> None:
     p.add_argument("--ckpt", type=Path, default=None)
     p.add_argument("--hifi-dir", type=Path, default=None)
     p.add_argument("--circuit0", action="store_true", help="Stage-1 production data path: HiFi parquet, trainable=nces")
+    p.add_argument("--out-dir", type=Path, default=None)
+    p.add_argument("--ckpt-every", type=int, default=64)
     p.add_argument("--batch-size", type=int, default=1)
     p.add_argument("--device", default="cuda")
     args = p.parse_args()
@@ -48,6 +52,8 @@ def main() -> None:
             args.max_steps = 1
         if args.stage != 1:
             raise SystemExit("circuit-0 is Stage 1 only")
+        if args.out_dir is None:
+            args.out_dir = Path("/workspace/checkpoints/circuit0")
 
     with torch.device("meta"):
         model = Amaterasu32B(cfg)
@@ -61,6 +67,8 @@ def main() -> None:
         max_steps=args.max_steps,
         circuit0=args.circuit0,
         log_every=1 if args.circuit0 else 20,
+        ckpt_every=args.ckpt_every,
+        nces_out_dir=str(args.out_dir) if args.out_dir else None,
     )
     if args.max_steps <= 0:
         log("model identity verified on meta; pass --circuit0 --ckpt --hifi-dir --max-steps 1")
@@ -78,17 +86,30 @@ def main() -> None:
     batches = iter_circuit0_batches(
         args.hifi_dir,
         batch_size=args.batch_size,
-        max_episodes=64,
+        max_episodes=256,
         max_rows=max(args.max_steps * args.batch_size, args.max_steps, 8),
         device=device,
     )
-    train_loop(model, batches, train_cfg)
-    nces_out = args.ckpt.parent / "nces-circuit0.safetensors"
-    tensors = {k: v.detach().contiguous().cpu() for k, v in model.nces.state_dict().items()}
-    from safetensors.torch import save_file
-
-    save_file(tensors, str(nces_out))
-    log(f"wrote {nces_out} tensors={len(tensors)}")
+    history = train_loop(model, batches, train_cfg)
+    assert args.out_dir is not None
+    args.out_dir.mkdir(parents=True, exist_ok=True)
+    latest = args.out_dir / "nces-circuit0.safetensors"
+    n = save_module(model.nces, latest)
+    metrics = {
+        "model_id": cfg.name,
+        "frozen_total": report.total,
+        "freeze_hash": cfg.freeze_hash(),
+        "trainable": n_train,
+        "steps": len(history),
+        "loss_first": history[0]["total"] if history else None,
+        "loss_last": history[-1]["total"] if history else None,
+        "source": "hifi-umi-2k",
+        "video": False,
+        "intent_label": None,
+    }
+    (args.out_dir / "metrics.json").write_text(json.dumps(metrics, indent=2), encoding="utf-8")
+    log(f"wrote {latest} tensors={n}")
+    log(f"metrics {metrics['loss_first']} -> {metrics['loss_last']} steps={metrics['steps']}")
     log("CIRCUIT0 TRAIN GATE PASSED")
 
 

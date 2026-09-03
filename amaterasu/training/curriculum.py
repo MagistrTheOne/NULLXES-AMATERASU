@@ -60,3 +60,4 @@ class TrainConfig:
     log_every: int = 20
     ckpt_every: int = 500
     circuit0: bool = False
+    nces_out_dir: str | None = None

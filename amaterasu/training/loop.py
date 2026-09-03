@@ -3,6 +3,7 @@ from __future__ import annotations
 import itertools
 import time
 from collections.abc import Iterator
+from pathlib import Path
 
 import torch
 
@@ -11,7 +12,7 @@ from amaterasu.model.accounting import account, assert_frozen_total
 from amaterasu.model.flow.matching import pack_nces_action
 from amaterasu.tensors.sample import AMATERASUBatch
 from amaterasu.training.curriculum import TrainConfig, weights_for_stage
-from amaterasu.training.losses import compute_losses
+from amaterasu.checkpoint.safetensors_io import save_module
 from amaterasu.utils.logging import log
 from amaterasu.utils.profile import Profiler
 
@@ -105,7 +106,7 @@ def train_loop(
     model: Amaterasu32B,
     batches: Iterator[AMATERASUBatch],
     cfg: TrainConfig,
-) -> None:
+) -> list[dict[str, float]]:
     report = account(model)
     assert_frozen_total(report)
     try:
@@ -117,6 +118,8 @@ def train_loop(
     prof = Profiler()
     step = 0
     seen = 0
+    history: list[dict[str, float]] = []
+    out_dir = Path(cfg.nces_out_dir) if cfg.nces_out_dir else None
     for batch in batches:
         seen += 1
         t0 = time.perf_counter()
@@ -124,11 +127,20 @@ def train_loop(
         dt = time.perf_counter() - t0
         prof.record(dt)
         step += 1
+        row = {k: float(v) for k, v in stats.items()}
+        row["step"] = float(step)
+        row["dt"] = dt
+        history.append(row)
         if step % cfg.log_every == 0 or cfg.circuit0:
             log(f"step={step} loss={stats['total']:.6f} mm={stats['mm']:.6f} dt={dt:.3f}s")
         if not torch.isfinite(torch.tensor(stats["total"])):
             raise RuntimeError(f"non-finite loss at step={step}: {stats}")
+        if out_dir is not None and cfg.ckpt_every > 0 and step % cfg.ckpt_every == 0:
+            path = out_dir / f"nces-step{step:04d}.safetensors"
+            save_module(model.nces, path)
+            log(f"ckpt {path}")
         if step >= cfg.max_steps:
             break
     if seen == 0:
         raise RuntimeError("AMATERASU DATA GATE FAILED: zero training batches")
+    return history

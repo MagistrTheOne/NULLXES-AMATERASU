@@ -88,6 +88,13 @@ def load_into_module(
         raise RuntimeError(f"load mismatch missing={missing} unexpected={unexpected}")
 
 
+def save_module(module: nn.Module, path: Path) -> int:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tensors = {k: v.detach().contiguous().cpu() for k, v in module.state_dict().items()}
+    save_file(tensors, str(path))
+    return len(tensors)
+
+
 def save_optimizer(state: dict, path: Path) -> None:
     tensors = {k: v for k, v in state.items() if torch.is_tensor(v)}
     meta = {k: v for k, v in state.items() if not torch.is_tensor(v)}

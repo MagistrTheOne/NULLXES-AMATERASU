@@ -58,7 +58,11 @@ def iter_parquet_records(path: Path, max_episodes: int, max_rows: int) -> Iterat
 
 
 def iter_hifi_dir(root: Path, max_episodes: int = 64, max_rows: int = 4096) -> Iterator[dict]:
-    files = sorted(root.rglob("*.parquet")) if root.exists() else []
+    files = sorted(
+        f
+        for f in (root.rglob("*.parquet") if root.exists() else [])
+        if "/meta/" not in f.as_posix().lower()
+    )
     if not files:
         raise FileNotFoundError(
             f"no parquet under {root}. "

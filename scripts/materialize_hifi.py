@@ -18,6 +18,8 @@ def _is_parquet(name: str) -> bool:
     n = name.replace("\\", "/").lower()
     if not n.endswith(".parquet"):
         return False
+    if "/meta/" in n or n.startswith("meta/"):
+        return False
     return not any(m in n for m in VIDEO_MARKERS)
 
 

@@ -79,10 +79,16 @@ def main() -> None:
         args.hifi_dir,
         batch_size=args.batch_size,
         max_episodes=64,
-        max_rows=max(args.max_steps * args.batch_size, 8),
+        max_rows=max(args.max_steps * args.batch_size, args.max_steps, 8),
         device=device,
     )
     train_loop(model, batches, train_cfg)
+    nces_out = args.ckpt.parent / "nces-circuit0.safetensors"
+    tensors = {k: v.detach().contiguous().cpu() for k, v in model.nces.state_dict().items()}
+    from safetensors.torch import save_file
+
+    save_file(tensors, str(nces_out))
+    log(f"wrote {nces_out} tensors={len(tensors)}")
     log("CIRCUIT0 TRAIN GATE PASSED")
 
 

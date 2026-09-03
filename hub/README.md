@@ -72,11 +72,12 @@ From-scratch Embodied Agency Foundation Model. Native format `amaterasu-ckpt-v1`
 | file | what |
 |---|---|
 | `README.md` | this card |
-| `amaterasu_32b_v0.1.json` | freeze config |
-| `nces-circuit0.safetensors` | Stage-1 Circuit-0 NCES encoder after HiFi parquet train (trainable subset only) |
+| `amaterasu_32b_v0.1.json` | freeze config (native, not Transformers `config.json`) |
+| `manifest.json` | `amaterasu-ckpt-v1` identity + weight map |
+| `*.safetensors` | 51 freeze shards, ~119 GB fp32. `nces.safetensors` is Circuit-0 overlay |
 | `metrics.json` | circuit-0 run metrics |
 
-Full 32B init (`51 × .safetensors` + `manifest.json`, ~119 GB fp32) is **not** this Hub folder. Load universal weights from the volume checkpoint `amaterasu_32b_v0.1_init`, then overlay NCES from `nces-circuit0.safetensors`.
+No Transformers `config.json`. No `model.safetensors.index.json`. Hub Parameters chip, if present, is from safetensors headers. Source of truth is `frozen_total` above.
 
 ## Circuit-0 (this release)
 
@@ -84,7 +85,8 @@ Full 32B init (`51 × .safetensors` + `manifest.json`, ~119 GB fp32) is **not** 
 - Trainable: `nces` only (`274,490,880`). Rest of freeze graph frozen.
 - Hardware: 1× NVIDIA H200 141 GB, bf16 autocast. Not full 32B AdamW.
 - Gate: finite `L_mm`, checkpoint write, resume from `amaterasu-ckpt-v1`.
+- Overlay: trained NCES replaces freeze `nces.safetensors`. Total stays `31,740,290,560`.
 
 ## Load
 
-Use AMATERASU `resume_modules` for the 32B init shards, then `nces.load_state_dict` from `nces-circuit0.safetensors`.
+Use AMATERASU `resume_modules` on this repo's 51 shards. Do not `AutoModel.from_pretrained`.

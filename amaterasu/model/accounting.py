@@ -34,7 +34,7 @@ class LedgerReport:
 
 
 def nparams(module: nn.Module) -> int:
-    return sum(p.numel() for p in module.parameters() if p.requires_grad)
+    return sum(p.numel() for p in module.parameters())
 
 
 def _hpt_buckets(hpt: nn.Module) -> dict[str, int]:

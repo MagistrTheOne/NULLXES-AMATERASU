@@ -59,3 +59,4 @@ class TrainConfig:
     seed: int = 0
     log_every: int = 20
     ckpt_every: int = 500
+    circuit0: bool = False

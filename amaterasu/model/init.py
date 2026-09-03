@@ -44,3 +44,7 @@ def init_parameters(module: nn.Module, residual_layers: int) -> None:
 
 def materialize_cpu(module: nn.Module) -> None:
     module.to_empty(device=torch.device("cpu"))
+
+
+def materialize_empty(module: nn.Module, device: torch.device) -> None:
+    module.to_empty(device=device)

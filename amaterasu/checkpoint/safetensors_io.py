@@ -59,15 +59,25 @@ def stream_init_safetensors(model: Amaterasu32B, out_dir: Path) -> None:
     (out_dir / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
 
 
-def load_shard(path: Path, device: torch.device | None = None) -> dict[str, torch.Tensor]:
+def load_shard(
+    path: Path,
+    device: torch.device | None = None,
+    dtype: torch.dtype | None = None,
+) -> dict[str, torch.Tensor]:
     tensors = load_file(str(path))
-    if device is not None:
-        tensors = {k: v.to(device) for k, v in tensors.items()}
+    if device is not None or dtype is not None:
+        tensors = {k: v.to(device=device, dtype=dtype) for k, v in tensors.items()}
     return tensors
 
 
-def load_into_module(module: nn.Module, path: Path, strict: bool = True) -> None:
-    sd = load_shard(path)
+def load_into_module(
+    module: nn.Module,
+    path: Path,
+    strict: bool = True,
+    device: torch.device | None = None,
+    dtype: torch.dtype | None = None,
+) -> None:
+    sd = load_shard(path, device=device, dtype=dtype)
     missing, unexpected = module.load_state_dict(sd, strict=False)
     if strict and (missing or unexpected):
         raise RuntimeError(f"load mismatch missing={missing} unexpected={unexpected}")

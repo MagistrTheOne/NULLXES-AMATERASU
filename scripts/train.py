@@ -67,10 +67,12 @@ def main() -> None:
         return
 
     device = torch.device(args.device if torch.cuda.is_available() else "cpu")
-    log(f"materialize empty on {device}")
-    materialize_empty(model, device)
+    log(f"materialize empty on {device} dtype=bf16")
+    materialize_empty(model, device, dtype=torch.bfloat16)
+    if device.type == "cuda":
+        log(f"cuda reserved_gb={torch.cuda.memory_reserved(0)/1024**3:.1f}")
     log(f"resume {args.ckpt}")
-    resume_modules(model, args.ckpt, device=device, dtype=torch.bfloat16)
+    resume_modules(model, args.ckpt, dtype=torch.bfloat16)
     n_train = apply_trainable(model)
     log(f"circuit0 trainable={n_train:,}")
     batches = iter_circuit0_batches(

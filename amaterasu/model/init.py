@@ -46,5 +46,12 @@ def materialize_cpu(module: nn.Module) -> None:
     module.to_empty(device=torch.device("cpu"))
 
 
-def materialize_empty(module: nn.Module, device: torch.device) -> None:
+def materialize_empty(
+    module: nn.Module,
+    device: torch.device,
+    dtype: torch.dtype | None = None,
+) -> None:
+    """Allocate storage on `device`. Cast dtype while still meta — never fp32-empty a 32B on GPU."""
+    if dtype is not None:
+        module.to(dtype=dtype)
     module.to_empty(device=device)

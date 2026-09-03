@@ -65,9 +65,14 @@ def load_shard(
     dtype: torch.dtype | None = None,
 ) -> dict[str, torch.Tensor]:
     tensors = load_file(str(path))
-    if device is not None or dtype is not None:
-        tensors = {k: v.to(device=device, dtype=dtype) for k, v in tensors.items()}
-    return tensors
+    out: dict[str, torch.Tensor] = {}
+    for k, v in tensors.items():
+        if dtype is not None and v.is_floating_point():
+            v = v.to(dtype=dtype)
+        if device is not None:
+            v = v.to(device=device)
+        out[k] = v
+    return out
 
 
 def load_into_module(

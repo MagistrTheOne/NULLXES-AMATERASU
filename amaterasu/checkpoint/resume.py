@@ -7,6 +7,7 @@ import torch
 
 from amaterasu.checkpoint.safetensors_io import load_into_module
 from amaterasu.model.amaterasu import Amaterasu32B
+from amaterasu.utils.logging import log
 
 
 def resume_modules(
@@ -34,16 +35,20 @@ def resume_modules(
     for name, module in mapping.items():
         path = ckpt_dir / f"{name}.safetensors"
         if path.exists():
+            log(f"load {path.name}")
             load_into_module(module, path, strict=False, device=device, dtype=dtype)
     for i, layer in enumerate(model.hpt.fast_layers):
         path = ckpt_dir / f"hpt-fast-{i}.safetensors"
         if path.exists():
+            log(f"load {path.name}")
             load_into_module(layer, path, strict=False, device=device, dtype=dtype)
     for i, layer in enumerate(model.hpt.slow_dense_layers):
         path = ckpt_dir / f"hpt-slow_dense-{i}.safetensors"
         if path.exists():
+            log(f"load {path.name}")
             load_into_module(layer, path, strict=False, device=device, dtype=dtype)
     for i, layer in enumerate(model.hpt.slow_moe_layers):
         path = ckpt_dir / f"hpt-slow_moe-{i}.safetensors"
         if path.exists():
+            log(f"load {path.name}")
             load_into_module(layer, path, strict=False, device=device, dtype=dtype)
